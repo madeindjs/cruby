@@ -1,0 +1,61 @@
+
+= Cruby
+
+Tests pour mélanger du code Ruby et du C.
+
+== Création de la librairie
+
+Nous allons générer une nouvelle gemme appelé `cruby` (oui je sais, c'est un moche..). Pour cela, on utilise https://bundler.io/[Bundler].
+
+[source, console]
+---
+$ bundle gem cruby
+---
+
+Afin que notre librairie soir valide, il faut lui ajouter des informations dans le fichier `cruby.gemspec`:
+
+[source,ruby]
+.cruby.gemspec
+---
+# ...
+Gem::Specification.new do |spec|
+  # ...
+  spec.summary       = %q{Somes tests with Ruby and C}
+  spec.description   = %q{Somes tests with Ruby and C}
+  spec.homepage      = "https://github.com/madeindjs/cruby"
+  spec.license       = "MIT"
+  # ...
+  if spec.respond_to?(:metadata)
+    spec.metadata["allowed_push_host"] = "https://rubygems.org"
+    spec.metadata["homepage_uri"] = spec.homepage
+    spec.metadata["source_code_uri"] = "https://github.com/madeindjs/cruby"
+    spec.metadata["changelog_uri"] = "https://github.com/madeindjs/cruby"
+  else
+    # ...
+  end
+  # ...
+end
+---
+
+Maintenant nous pouvons _commiter_:
+
+[source, console]
+---
+$ git commit -am "Init project"
+---
+
+== Premier test
+
+Dans ce premier test nous allons essayer d'ajouter une méthode à notre classe `Cruby`.
+
+La première chose à savoir est que tous le code non-Ruby doit se situer dans le dossier `ext`. Ce dossier n'est d'ailleur pas généré par Ruby. Ce dossier se composera de sous-dossiers qui sont en quelques sorte les TODO
+
+
+[source, bash]
+---
+$ mkdir -p ext/cruby
+$ touch ext/my_malloc/extconf.rb
+$ touch ext/my_malloc/my_malloc.c
+---
+
+Nous allons maintenant utiliser la librairie https://github.com/luislavena/rake-compiler[rake-compiler] pour compiler notre code C en utilisant Rake foowhich add some tasks to compile the project

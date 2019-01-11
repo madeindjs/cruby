@@ -1,5 +1,6 @@
 
 = Cruby
+:source-highlighter: rouge
 
 Tests pour mélanger du code Ruby et du C.
 
@@ -66,6 +67,8 @@ Dedans nous allons créer deux fichiers. Le premier `ext/cruby/extconf.rb` conti
 require 'mkmf'
 create_makefile 'crubyc'
 ----
+
+NOTE: Le fichier  `extconf.rb` permet d'effectuer quelques vérifications avant la compilation. `mkmf` donne accès à plusieurs fonctions comme `have_header` pour vérifier si la librairie est disponible pour la compilation ou encore `find_executable` pour vérifier si l’exécutable est présent.
 
 Le deuxième `ext/cruby/Init_crubyc.c` contient notre code externe
 

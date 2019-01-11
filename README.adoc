@@ -1,12 +1,12 @@
-
 = Cruby
 :source-highlighter: rouge
+:linkcss:
 
 Tests pour mélanger du code Ruby et du C.
 
 == Création de la librairie
 
-Nous allons générer une nouvelle gemme appelé `cruby` (oui je sais, c'est un moche..). Pour cela, on utilise https://bundler.io/[Bundler].
+Nous allons générer une nouvelle gemme appelé `cruby` footnote:[Je sais. C'est un moche..]). Pour cela, on utilise https://bundler.io/[Bundler].
 
 [source, console]
 ----
@@ -104,7 +104,6 @@ RSpec.describe Cruby do
 end
 ----
 
-
 Nous allons maintenant utiliser la librairie https://github.com/luislavena/rake-compiler[rake-compiler] pour compiler notre code C footnote:[Il est possible de le faire à la main mais je ne vais pas en parler. S'il existe une librairie nous facilitant la tâche, autant l'utiliser]. Ajoutons donc la gemme.
 
 [source, bash]
@@ -145,6 +144,10 @@ Cruby
 Finished in 0.00397 seconds (files took 0.2523 seconds to load)
 1 example, 0 failures
 ----
+
+== Utiliser une librairie écrite en C
+
+Beucoup de gemmes Ruby ne sont que des _bidings_ de librairies écrites en C comme https://github.com/brianmario/mysql2[Mysql2].
 
 == Liens
 

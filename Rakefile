@@ -6,6 +6,7 @@ RSpec::Core::RakeTask.new(:spec)
 task default: :spec
 
 Rake::ExtensionTask.new('crubyc')
+Rake::ExtensionTask.new('rubycurl')
 
 desc 'Compile extensions and run tests'
 task test: %i[compile spec] do

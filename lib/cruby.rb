@@ -1,4 +1,5 @@
-require "cruby/version"
+require 'cruby/version'
+require 'crubyc'
 
 module Cruby
   class Error < StandardError; end

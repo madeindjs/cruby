@@ -8,15 +8,15 @@ Tests pour mélanger du code Ruby et du C.
 Nous allons générer une nouvelle gemme appelé `cruby` (oui je sais, c'est un moche..). Pour cela, on utilise https://bundler.io/[Bundler].
 
 [source, console]
----
+----
 $ bundle gem cruby
----
+----
 
 Afin que notre librairie soir valide, il faut lui ajouter des informations dans le fichier `cruby.gemspec`:
 
 [source,ruby]
 .cruby.gemspec
----
+----
 # ...
 Gem::Specification.new do |spec|
   # ...
@@ -35,27 +35,116 @@ Gem::Specification.new do |spec|
   end
   # ...
 end
----
+----
 
 Maintenant nous pouvons _commiter_:
 
 [source, console]
----
+----
 $ git commit -am "Init project"
----
+----
 
 == Premier test
 
 Dans ce premier test nous allons essayer d'ajouter une méthode à notre classe `Cruby`.
 
-La première chose à savoir est que tous le code non-Ruby doit se situer dans le dossier `ext`. Ce dossier n'est d'ailleur pas généré par Ruby. Ce dossier se composera de sous-dossiers qui sont en quelques sorte les TODO
+La première chose à savoir est que tous le code non-Ruby doit se situer dans le dossier `ext` footnote:[Ce dossier n'est d’ailleurs pas généré par Ruby]. Ce dossier se composera de sous-dossiers qui sont en quelques sorte des modules.
 
 
 [source, bash]
----
+----
 $ mkdir -p ext/cruby
-$ touch ext/my_malloc/extconf.rb
-$ touch ext/my_malloc/my_malloc.c
----
+$ touch ext/cruby/extconf.rb
+$ touch ext/cruby/Init_crubyc.c
+----
 
-Nous allons maintenant utiliser la librairie https://github.com/luislavena/rake-compiler[rake-compiler] pour compiler notre code C en utilisant Rake foowhich add some tasks to compile the project
+Dedans nous allons créer deux fichiers. Le premier `ext/cruby/extconf.rb` contient des instructions pour compiler notre module
+
+[source, ruby]
+.ext/cruby/extconf.rb
+----
+require 'mkmf'
+create_makefile 'crubyc'
+----
+
+Le deuxième `ext/cruby/Init_crubyc.c` contient notre code externe
+
+[source, c]
+.ext/cruby/Init_crubyc.c
+----
+#include <ruby.h>
+
+VALUE rb_cprint(VALUE self, VALUE str) {
+  if (RB_TYPE_P(str, T_STRING) == 1) {
+    return rb_sprintf("Printed from C code: %ld", str);
+  }
+  return Qnil;
+}
+
+void Init_crubyc() {
+  VALUE mod = rb_define_module("Cruby");
+  rb_define_singleton_method(mod, "cprint", rb_cprint, 1);
+}
+----
+
+Dans le code externe, nous avons simplement récupéré le module `Cruby` et nous lui avons ajouté une méthode `cprint`.
+
+Écrivons un test unitaire pour tester notre méthode:
+
+[source, c]
+.spec/cruby_spec.rb
+----
+RSpec.describe Cruby do
+  it 'Should do something with no error' do
+    expect(Cruby.cprint('hello')).to match(/Printed from C/)
+  end
+end
+----
+
+
+Nous allons maintenant utiliser la librairie https://github.com/luislavena/rake-compiler[rake-compiler] pour compiler notre code C footnote:[Il est possible de le faire à la main mais je ne vais pas en parler. S'il existe une librairie nous facilitant la tâche, autant l'utiliser]. Ajoutons donc la gemme.
+
+[source, bash]
+----
+$ bundle add rake-compiler
+----
+
+Afin de l'utiliser, nous allons créer une tâche qui va compiler le code et lancer les tests unitaires. C'est à dire une tâche qui va successivement appeler la tâche `compile` et `spec`.
+
+[source, ruby]
+.Rakefile
+----
+require 'bundler/gem_tasks'
+require 'rspec/core/rake_task'
+require 'rake/extensiontask'
+
+# Import rspec task
+RSpec::Core::RakeTask.new(:spec)
+task default: :spec
+
+# create `compile:crubyc` task
+Rake::ExtensionTask.new('crubyc')
+
+desc 'Compile extensions and run tests'
+task test: %i[compile spec] do
+end
+----
+
+Et maintenant, l'instant de vérité, on lance les tests:
+
+[source, console]
+----
+$ rake test
+
+Cruby
+  Should do something with no error
+
+Finished in 0.00397 seconds (files took 0.2523 seconds to load)
+1 example, 0 failures
+----
+
+== Liens
+
+- http://chris911.github.io/blog/2014/08/10/writing-a-ruby-gem-with-c-extension/
+- http://aaronbedra.com/extending-ruby/
+- https://github.com/ruby/ruby/blob/trunk/doc/extension.rdoc

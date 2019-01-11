@@ -2,7 +2,7 @@
 /.yardoc
 /_yardoc/
 /coverage/
-/doc/
+/doc/*.html
 /pkg/
 /spec/reports/
 /tmp/
@@ -10,4 +10,5 @@
 # rspec failure tracking
 .rspec_status
 lib/crubyc.so
+lib/crubyc.bundle
 README.html

@@ -6,10 +6,15 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    asciidoctor (1.5.8)
+    asciidoctor-rouge (0.4.0)
+      asciidoctor (>= 1.5.6, < 2.1)
+      rouge (>= 2.2, < 4)
     diff-lcs (1.3)
     rake (10.5.0)
     rake-compiler (1.0.7)
       rake
+    rouge (3.3.0)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
       rspec-expectations (~> 3.8.0)
@@ -28,6 +33,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  asciidoctor (~> 1.5)
+  asciidoctor-rouge (~> 0.4.0)
   bundler (~> 1.17)
   cruby!
   rake (~> 10.0)
